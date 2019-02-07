@@ -64,7 +64,7 @@ public static class ModLoader
             }
             catch (Exception e)
             {
-                DevConsole.Console.LogError("Error while loading mod " + Path.GetFileNameWithoutExtension(file) + ": " + e.Message + "\n" + e.StackTrace);
+                DevConsole.Console.LogError("Error while loading mod " + Path.GetFileNameWithoutExtension(file) + ": " + e.ToString());
             }
         }
 
@@ -112,10 +112,25 @@ public static class ModLoader
             throw new Exception("class 'Mod' is missing static UnLoad method");
         mod.unload = unload;
 
-        mod.loaded = true;
-        info.Invoke(null, new object[] { });
+        try
+        {
+            Modding.CommandLoader cl = new Modding.CommandLoader(assembly);
+            DevConsole.Console.AddCommands(cl.GetCommands());
+        }catch(Exception e)
+        {
+            DevConsole.Console.LogError("Error while loading commands: " + e.ToString());
+        }
 
-        ModLoadedEvent?.Invoke(null, new ModLoadedArg(mod));
+        try
+        {
+            mod.loaded = true;
+            info.Invoke(null, new object[] { });
+            ModLoadedEvent?.Invoke(null, new ModLoadedArg(mod));
+        }
+        catch(Exception e) {
+            DevConsole.Console.LogError("Error while invoking load: " + e.ToString());
+        }
+        
     }
 
     public static void UnLoadMod(Mod m)

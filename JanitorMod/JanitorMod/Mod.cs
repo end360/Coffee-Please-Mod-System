@@ -14,8 +14,6 @@ namespace JanitorMod
     class Mod
     {
         private static UnityAction CleanTrashAction;
-        private static DevConsole.ActionCommand<string> commandPurchaseUpgrade;
-        private static DevConsole.ActionCommand commandListUpgrade;
 
         public static StoreUpgradeDetails JanitorUpgradeDetails;
 
@@ -64,7 +62,8 @@ namespace JanitorMod
                 CleanTrash();
             }
         }
-
+		
+		[DevConsole.Command("upgrade", "purchase", "Purchases an upgrade (this doesn't force it).")]
         public static void PurchaseUpgrade(string upgrade)
         {
             foreach(KeyValuePair<StoreUpgradeSystem.Upgrade, StoreUpgradeDetails> kv in StoreUpgradeSystem.get.upgradeDictionary)
@@ -94,7 +93,8 @@ namespace JanitorMod
             }
 
         }
-
+		
+		[DevConsole.Command("upgrade", "list", "Lists all upgrades registered in the system.")]
         public static void ListUpgrades()
         {
             foreach (KeyValuePair<StoreUpgradeSystem.Upgrade, StoreUpgradeDetails> kv in StoreUpgradeSystem.get.upgradeDictionary)
@@ -115,18 +115,6 @@ namespace JanitorMod
             JanitorUpgradeDetails.cost = 250;
             JanitorUpgradeDetails.description = "Automatically cleans the store when the day ends";
             JanitorUpgradeDetails.name = "Janitor";
-
-            if (commandPurchaseUpgrade == null)
-            {
-                commandPurchaseUpgrade = new DevConsole.ActionCommand<string>(PurchaseUpgrade, "upgrade", "purchase", "Purchases an upgrade (this doesn't force it).");
-                DevConsole.Console.AddCommand(commandPurchaseUpgrade);
-            }
-
-            if(commandListUpgrade == null)
-            {
-                commandListUpgrade = new DevConsole.ActionCommand(ListUpgrades, "upgrade", "list", "Lists all upgrades registered in the system.");
-                DevConsole.Console.AddCommand(commandListUpgrade);
-            }
 
         }
 
